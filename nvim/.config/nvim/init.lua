@@ -35,3 +35,5 @@ require "nvchad.autocmds"
 vim.schedule(function()
   require "mappings"
 end)
+
+vim.g.copilot_node_command = "/Users/uciel/.nvm/versions/node/v20.17.0/bin/node" 
