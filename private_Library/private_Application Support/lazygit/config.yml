@@ -1,5 +1,0 @@
-gui:
-  nerdFontsVersion: "3"
-os:
-  open: "zed {{filename}}"
-  editPreset: "zed"
