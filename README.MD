@@ -1,5 +1,6 @@
-### Using STOW
-[Medium Post - Good guide](https://medium.com/quick-programming/managing-dotfiles-with-gnu-stow-9b04c155ebad)
+### Using [STOW](https://www.gnu.org/software/stow/) 📂
+
+ℹ️ [Medium Post - Good guide](https://medium.com/quick-programming/managing-dotfiles-with-gnu-stow-9b04c155ebad)
 
 #### ➕ Adding dotfiles
 1. Create a directory in the dotfiles folder with the name of the program you want to manage.
