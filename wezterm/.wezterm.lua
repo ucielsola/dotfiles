@@ -8,7 +8,7 @@ config.set_environment_variables = {
 
 config.color_scheme = 'Catppuccin Macchiato (Gogh)'
 
-config.font = wezterm.font("MesloLGS Nerd Font Mono")
+config.font = wezterm.font("CaskaydiaMono Nerd Font")
 config.font_size = 19
 
 config.enable_tab_bar = true
