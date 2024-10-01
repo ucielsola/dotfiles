@@ -33,3 +33,9 @@ eval "$(fzf --zsh)"
 
 # My aliases
 source ~/.alias.sh
+
+
+# Oh My Posh https://ohmyposh.dev/
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh)"
+fi
