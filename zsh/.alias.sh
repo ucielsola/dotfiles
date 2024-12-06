@@ -165,14 +165,16 @@ function branch() {
 #   - fzf (https://github.com/junegunn/fzf)
 #   - pbcopy (on macOS for clipboard integration; on Linux, consider xclip or xsel and adjust accordingly)
 
-function log {                                       
-    git log --color=never --pretty=format:"%h %ad %d %s [%cn]" --decorate --date=short | \
+function log {
+    git log \
+        --color=always \
+        --pretty=format:'%C(auto)%h %Cgreen%ad%Creset %C(yellow)%d %C(white)%s %C(magenta)[%cn]%Creset' \
+        --decorate --date=short | \
     fzf --ansi --reverse --multi \
-        --preview="echo {} | cut -d' ' -f1 | xargs git show --color=always" \
-        --preview-window=right:60%:wrap | \
+        --preview='echo {} | cut -d" " -f1 | xargs git show --color=always' \
+        --preview-window='right:60%:wrap' | \
     awk '{print $1}' | tr "\n" " " | pbcopy
 }
-
 # ERU
 # activate python env
 alias eru_env="source ~/eru/back/venv/bin/activate"
