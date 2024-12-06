@@ -1,12 +1,12 @@
 # Aliases
-alias zshcfg="zed ~/.zshrc"
-alias aliascfg="zed ~/.alias.sh"
+alias zshcfg="code ~/dotfiles/zsh/.zshrc"
+alias aliascfg="code ~/dotfiles/zsh/.alias.sh"
 alias src="source ~/.zshrc"
 alias c="clear"
 alias prd="pnpm run dev"
 alias bru="brew update && brew upgrade && brew cleanup"
 alias lg="lazygit"
-alias esp="zed ~/Library/Application\ Support/espanso/match/base.yml"
+alias esp="code ~/Library/Application\ Support/espanso/match/base.yml"
 
 # ---- Eza (better ls) -----
 alias ls="eza --icons=always --group-directories-first -a --no-permissions --no-user"
@@ -32,9 +32,6 @@ alias gc="git commit"
 alias gcp="git cherry-pick"
 alias gcpc="git cherry-pick --continue"
 alias gcpa="git cherry-pick --abort"
-
-# Log commits with pretty colors
-alias log="git log --graph --pretty=format:'%C(#bd93f9)%h%Creset -%C(#ffb86c)%d%Creset %s %C(#ff5555)(%cr) %C(#8be9fd)<%an>%Creset'"
 
 ### FUNCTIONS
 
@@ -154,8 +151,27 @@ function branch() {
     fi
 }
 
+#
+# log - Git Log FZF Interactive Selector
+# Features:
+#   - Fuzzy search and filter commits by subject, author, hash, or date.
+#   - Live preview of commit details and diffs (uses `git show --color=always`).
+#   - Multi-selection support: select multiple commits using TAB.
+#   - Automatically copies the selected commit hashes to the clipboard upon exit.
+#   - Splits the screen: the left 50% shows the commit list, and the right 50% shows the preview.
+#
+# Dependencies:
+#   - git
+#   - fzf (https://github.com/junegunn/fzf)
+#   - pbcopy (on macOS for clipboard integration; on Linux, consider xclip or xsel and adjust accordingly)
 
-
+function log {
+    git log --color=never --pretty=format:"%h %ad %d %s [%cn]" --decorate --date=short | \
+    fzf --ansi --reverse --multi \
+        --preview="echo {} | cut -d' ' -f1 | xargs git show --color=always" \
+        --preview-window=right:50%:wrap | \
+    awk '{print $1}' | tr "\n" " " | pbcopy
+}
 
 # ERU
 # activate python env
