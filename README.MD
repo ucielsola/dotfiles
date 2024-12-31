@@ -7,6 +7,13 @@
 2. Move the dotfiles you want to manage to the directory you just created, maintaining the exact directory structure as in your home directory.
 3. Run `stow <program>` to symlink the dotfiles to the home directory.
 
+#### Example for Ghosty terminal:
+   1. `cd dotfiles`
+   2. `mkdir ghosty/.config`
+   3. `touch ./ghosty/.config/config`
+   4. `stow ghosty` 
+   5. Now, a symlink for the `config` file will be created in `$HOME/.config/ghosty`
+
 ## ⬆️ Updating dotfiles
 1. Update the dotfiles in the dotfiles folder.
 2. Run `stow -R <program>` to update the symlinks.  
