@@ -10,7 +10,7 @@
 #### Example for Ghosty terminal:
    1. `cd dotfiles`
    2. `mkdir ghosty/.config`
-   3. `touch ./ghosty/.config/config`
+   3. `touch ./ghosty/.config/ghosty/config` (name-of-program/original-file-path)
    4. `stow ghosty` 
    5. Now, a symlink for the `config` file will be created in `$HOME/.config/ghosty`
 
