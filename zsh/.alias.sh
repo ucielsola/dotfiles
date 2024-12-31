@@ -127,7 +127,7 @@ function branch() {
     fi
 
     # Define a common fzf command for both local and remote branches
-    fzf_command="fzf --height 50% --border --ansi --tac --preview-window right:70% \
+    fzf_command="fzf --height 100% --border --ansi --tac --preview-window right:50% \
         --preview 'echo -e \"\e[1mBranch: \$(sed s/^..// <<< {} | cut -d\" \" -f1)\e[0m\"; \
         git log --oneline --graph --date=short --pretty=\"format:%C(auto)%cd %h%d %s\" \$(sed s/^..// <<< {} | cut -d\" \" -f1) | head -$LINES'"
 
