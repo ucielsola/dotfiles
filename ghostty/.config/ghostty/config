@@ -2,9 +2,8 @@
 theme = dracula
 font-family = CaskaydiaMono Nerd Font
 background-opacity = 0.95
-font-size = 20
+font-size = 18
 cursor-style = block
-#adjust-cell-height = 35%
 
 mouse-hide-while-typing = true
 mouse-scroll-multiplier = 2
