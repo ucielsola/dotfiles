@@ -28,9 +28,13 @@
 # brew tap homebrew/autoupdate
 # brew autoupdate start 43200 --upgrade
 
+echo "Fetching Apps lists for Brew"
+curl -fsSL https://raw.githubusercontent.com/ucielsola/dotfiles/refs/heads/main/brew_apps -o /tmp/brew_apps
+curl -fsSL https://raw.githubusercontent.com/ucielsola/dotfiles/refs/heads/main/brew_casks -o /tmp/brew_casks
+
 echo "Installing a bunch of apps with Brew"
-brew install $(<./brew_apps)
-# brew install --cask $(<brew_casks)
+brew install $(</tmp/brew_apps)
+# brew install --cask $(</tmp/brew_casks)
 
 # # 1Password CLI
 # eval "$(op signin)"
