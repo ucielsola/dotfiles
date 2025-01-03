@@ -22,11 +22,11 @@
 # brew upgrade
 
 #### Create LaunchAgents dir
-mkdir -p ~/Library/LaunchAgents
+# mkdir -p ~/Library/LaunchAgents
 
-echo "Enabling autoupdate for homebrew packages (every 12 hours)..."
-brew tap homebrew/autoupdate
-brew autoupdate start 43200 --upgrade
+# echo "Enabling autoupdate for homebrew packages (every 12 hours)..."
+# brew tap homebrew/autoupdate
+# brew autoupdate start 43200 --upgrade
 
 echo "Installing a bunch of apps with Brew"
 brew install $(<./brew_apps)
