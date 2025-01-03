@@ -22,6 +22,7 @@ keybind = shift+ctrl+alt+super+s>up=goto_split:top
 keybind = shift+ctrl+alt+super+s>right=goto_split:right
 keybind = shift+ctrl+alt+super+s>down=goto_split:bottom
 keybind = shift+ctrl+alt+super+s>left=goto_split:left
+keybind = global:shift+ctrl+alt+super+t=toggle_quick_terminal
 
 # Shell
 shell-integration-features = no-cursor,sudo,no-title

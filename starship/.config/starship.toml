@@ -30,7 +30,7 @@ style = "bold blue"
 # Package module (shows version from package files)
 [package]
 style = "bold magenta"
-symbol = "󰏗 "
+symbol = " "
 
 [aws]
 symbol = "  "
@@ -111,7 +111,7 @@ symbol = "󰆥 "
 symbol = " "
 
 [nodejs]
-symbol = " "
+symbol = " "
 
 [ocaml]
 symbol = " "
