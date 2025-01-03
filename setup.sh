@@ -5,23 +5,21 @@
 ### Longshot https://apps.apple.com/cn/app/longshot-screenshot-ocr/id6450262949
 ### Perplexity https://apps.apple.com/us/app/perplexity-ask-anything/id6714467650
 
-
-
 ## Brew
 ### Install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 ### Enable brew
-(
-  echo
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-) >>/Users/uciel/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# (
+#   echo
+#   echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+# ) >>/Users/uciel/.zprofile
+# eval "$(/opt/homebrew/bin/brew shellenv)"
 
 #### Install packages and casks with brew
-echo "Updating and upgrading homebrew"
-brew update
-brew upgrade
+# echo "Updating and upgrading homebrew"
+# brew update
+# brew upgrade
 
 #### Create LaunchAgents dir
 mkdir -p ~/Library/LaunchAgents
@@ -31,49 +29,29 @@ brew tap homebrew/autoupdate
 brew autoupdate start 43200 --upgrade
 
 echo "Installing a bunch of apps with Brew"
+brew install $(<brew_apps)
+# brew install --cask $(<brew_casks)
 
-BREW_APPS=(
-  git
-  node
-  python
-  wget
-  btop
-  nvm
-  starship
-)
+# # 1Password CLI
+# eval "$(op signin)"
 
-BREW_CASK_APPS=(
-  font-caskaydia-mono-nerd-font
-  google-chrome
-  firefox
-  visual-studio-code
-  slack
-  spotify
-  zoom
-  arc
-  microsoft-teams
-  microsoft-auto-update
-  1password
-  chatgpt
-  raycast
-  whatsapp
-  cloudflare-warp
-  spotify
-  discord
-  slack
-  notion
-  zed
-  alt-tab
-  docker
-  lulu
-  eqmac
-  battery
-  hovrly
-  audacity
-  kyperkey
-  middleclick
-  mounty
-  ollama
-  telegram
-  vlc
-)
+# # Setup the Dock
+# dockutil --remove all --no-restart
+# dockutil --add "/Applications/Arc.app" --no-restart
+# dockutil --add "/Applications/Visual Studio Code.app" --no-restart
+# dockutil --add "/Applications/Ghostty.app" --no-restart
+# dockutil --add "/System/Applications/System Settings.app" --no-restart
+# dockutil --add '~/Downloads' --view list --display folder
+# dockutil --add "~/.Trash" --no-restart
+
+# dockconfig() {
+#   printf "\nSetting up permanent dock auto-hide.\n"
+#   defaults write com.apple.dock autohide -bool true
+#   defaults write com.apple.dock autohide-delay -float 0
+#   defaults write com.apple.dock autohide-time-modifier -float 0
+#   defaults write com.apple.dock static-only -bool false
+#   killall Dock
+# }
+
+# # xcode command line tools
+# xcode-select --install
