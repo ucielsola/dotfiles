@@ -29,7 +29,7 @@ brew tap homebrew/autoupdate
 brew autoupdate start 43200 --upgrade
 
 echo "Installing a bunch of apps with Brew"
-brew install $(<brew_apps)
+brew install $(<./brew_apps)
 # brew install --cask $(<brew_casks)
 
 # # 1Password CLI
