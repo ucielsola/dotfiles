@@ -11,6 +11,26 @@ alias esp="code ~/Library/Application\ Support/espanso/match/base.yml"
 alias ls="lsd -A --group-dirs first --date relative --size short"
 # ---- Zoxide (better cd) ----
 alias cd="z"
+alias ..="z .."
+alias ...="z ../.."
+alias ....="z ../../.."
+
+# Enhanced interactive directory jumping
+function cdi() {
+    local selected_dir
+    selected_dir=$(zoxide query -l | \
+        fzf --reverse \
+            --height=50% \
+            --border=rounded \
+            --prompt="🔍 " \
+            --pointer="➜" \
+            --header="Jump to directory" \
+            --preview='lsd -l --color=always {}' \
+            --preview-window='right:60%:wrap' \
+            --bind='ctrl-/:toggle-preview')
+    
+    [[ -n "$selected_dir" ]] && z "$selected_dir"
+}
 
 ### GIT ALIASES
 
