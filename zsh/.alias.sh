@@ -227,3 +227,12 @@ alias ip="ipconfig getifaddr en0"  # Get local IP
 alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"  # Flush DNS
 alias ports="lsof -PiTCP -sTCP:LISTEN"  # Show listening ports
 
+# Quick file/directory operations
+alias cpwd="pwd | pbcopy"  # Copy current path
+alias rmf="rm -rf"  # Force remove
+alias sz="du -sh"  # Get size of file/directory
+
+# Quick directory size overview with ncdu
+function sizes() {
+    ncdu -rr -x --exclude .git --exclude node_modules "$@"
+}
