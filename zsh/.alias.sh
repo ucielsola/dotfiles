@@ -152,6 +152,11 @@ alias cpwd="pwd | pbcopy"  # Copy current path
 alias rmf="rm -rf"  # Force remove
 alias sz="du -sh"  # Get size of file/directory
 
+alias mv="mv -i"  # Prompt before overwrite
+alias cp="cp -i"  # Prompt before overwrite
+alias rm="rm -i"  # Prompt before delete
+alias grep="rg --color=auto --line-number --smart-case"
+
 # Directory size overview with exclusions
 function sizes() {
     local path="${1:-.}"
