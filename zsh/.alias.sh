@@ -4,12 +4,11 @@ alias aliascfg="code ~/dotfiles/zsh/.alias.sh"
 alias src="source ~/.zshrc"
 alias c="clear"
 alias prd="pnpm run dev"
-alias bru="brew update && brew upgrade && brew cleanup"
 alias lg="lazygit"
 alias esp="code ~/Library/Application\ Support/espanso/match/base.yml"
 
-# ---- Eza (better ls) -----
-alias ls="eza --icons=always --group-directories-first -a --no-permissions --no-user"
+# ---- LSD (better ls) -----
+alias ls="lsd -A --group-dirs first --date relative --size short"
 # ---- Zoxide (better cd) ----
 alias cd="z"
 
@@ -23,6 +22,7 @@ alias delete_branches="git branch --no-color | fzf -m | xargs -I {} git branch -
 
 # Self-explanatory aliases...
 alias ghrm="git reset --hard origin/master"
+alias gs="git status -sb"  # Short status with branch info
 alias gsw="git switch"
 alias gswm="gsw master"
 alias gswd="gsw develop"
@@ -34,7 +34,6 @@ alias gcpc="git cherry-pick --continue"
 alias gcpa="git cherry-pick --abort"
 
 ### FUNCTIONS
-
 # cpbn - Copy the current Git branch name to the clipboard.
 #
 # Dependencies:
@@ -178,3 +177,33 @@ function log {
 # ERU
 # activate python env
 alias eru_env="source ~/eru/back/venv/bin/activate"
+
+# Quick mkdir + cd
+function mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Brew maintenance with outdated check
+function bru() {
+    echo "📦 Checking outdated packages..."
+    outdated=$(brew outdated)
+    
+    if [[ -z "$outdated" ]]; then
+        echo "✨ All packages are up to date!"
+        return
+    fi
+    
+    echo "$outdated"
+    echo -n "Continue with update? [y/N] "
+    read answer
+    if [[ $answer =~ ^[Yy]$ ]]; then
+        brew update && brew upgrade && brew cleanup
+        echo "✨ Brew update complete!"
+    fi
+}
+
+# System shortcuts
+alias ip="ipconfig getifaddr en0"  # Get local IP
+alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"  # Flush DNS
+alias ports="lsof -PiTCP -sTCP:LISTEN"  # Show listening ports
+
