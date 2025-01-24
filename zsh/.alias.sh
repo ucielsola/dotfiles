@@ -104,41 +104,24 @@ function extract_commits() {
 }
 
 # Interactive Git branch switching with fzf
+# This function lists local Git branches in an interactive fzf menu.
+# - Left pane: Displays all local branches for selection.
+# - Right pane: Dynamically shows the Git commit graph and logs for the branch currently highlighted.
+# Selecting a branch with Enter will check it out.
+# Exiting with ESC will leave the current branch unchanged.
 function branch() {
-    local list_all=false
-
-    # Check for the '-a' flag
-    if [[ $1 == "-a" ]]; then
-        list_all=true
-        shift
-    fi
-
-    # Define the fzf command with fixed quoting
-    local fzf_command='fzf --height 100% --border --ansi --tac --preview-window right:50% \
-        --preview "echo -e \"\e[1;36mBranch:\e[0m \e[33m$(echo {} | sed '\''s/^..//'\'' | awk '\''{print $1}'\'')\e[0m\"; \
-        git log --color=always --oneline --graph --date=short --pretty=\"format:%C(bold blue)%cd %C(auto)%h%C(bold yellow)%d %C(reset)%s\" $(echo {} | sed '\''s/^..//'\'' | awk '\''{print $1}'\'') | head -$LINES" \
-        --color=fg:#abb2bf,bg:#282c34,hl:#61afef \
-        --color=fg+:#dcdfe4,bg+:#3e4451,hl+:#56b6c2 \
-        --color=info:#56b6c2,prompt:#98c379,pointer:#e06c75 \
-        --color=marker:#e5c07b,spinner:#c678dd,header:#61afef'
-
-    # Get the branch list based on the '-a' flag
-    local result
-    if $list_all; then
-        result=$(git branch -r --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | awk '{print $1}')
-    else
-        result=$(git branch --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | awk '{print $1}')
-    fi
-
-    # Check out the selected branch if valid
+    local fzf_command="
+        fzf --height 100% --border --ansi --tac --preview-window right:50% \
+        --preview '
+            branch_name=\$(echo {} | sed \"s/^..//\");
+            echo -e \"\\e[1;36mBranch:\\e[0m \\e[33m\$branch_name\\e[0m\";
+            git log --color=always --oneline --graph --date=short \
+            --pretty=format:\"%C(bold blue)%cd %C(auto)%h%C(bold yellow)%d %C(reset)%s\" \$branch_name 2>/dev/null
+        '
+    "
+    local result=$(git branch --color=always | eval "$fzf_command" | sed 's/^..//')
     if [[ -n "$result" ]]; then
-        if [[ $result == remotes/* ]]; then
-            # Remove 'remotes/' prefix and checkout
-            local branch_name=$(echo "$result" | sed 's#remotes/##')
-            git checkout --track "$branch_name"
-        else
-            git checkout "$result"
-        fi
+        git checkout "$result"
     fi
 }
 
