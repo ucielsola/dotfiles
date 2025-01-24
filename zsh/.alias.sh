@@ -106,24 +106,36 @@ function extract_commits() {
 # Interactive Git branch switching with fzf
 function branch() {
     local list_all=false
+
+    # Check for the '-a' flag
     if [[ $1 == "-a" ]]; then
         list_all=true
         shift
     fi
 
-    fzf_command="fzf --height 100% --border --ansi --tac --preview-window right:50% \
-        --preview 'echo -e \"\e[1mBranch: \$(sed s/^..// <<< {} | cut -d\" \" -f1)\e[0m\"; \
-        git log --oneline --graph --date=short --pretty=\"format:%C(auto)%cd %h%d %s\" \$(sed s/^..// <<< {} | cut -d\" \" -f1) | head -$LINES'"
+    # Define the fzf command with fixed quoting
+    local fzf_command='fzf --height 100% --border --ansi --tac --preview-window right:50% \
+        --preview "echo -e \"\e[1;36mBranch:\e[0m \e[33m$(echo {} | sed '\''s/^..//'\'' | awk '\''{print $1}'\'')\e[0m\"; \
+        git log --color=always --oneline --graph --date=short --pretty=\"format:%C(bold blue)%cd %C(auto)%h%C(bold yellow)%d %C(reset)%s\" $(echo {} | sed '\''s/^..//'\'' | awk '\''{print $1}'\'') | head -$LINES" \
+        --color=fg:#abb2bf,bg:#282c34,hl:#61afef \
+        --color=fg+:#dcdfe4,bg+:#3e4451,hl+:#56b6c2 \
+        --color=info:#56b6c2,prompt:#98c379,pointer:#e06c75 \
+        --color=marker:#e5c07b,spinner:#c678dd,header:#61afef'
 
+    # Get the branch list based on the '-a' flag
+    local result
     if $list_all; then
-        result=$(git branch -r --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | cut -d' ' -f1)
+        result=$(git branch -r --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | awk '{print $1}')
     else
-        result=$(git branch --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | cut -d' ' -f1)
+        result=$(git branch --color=always | grep -v '/HEAD\s' | sort | eval "$fzf_command" | sed 's/^..//' | awk '{print $1}')
     fi
 
+    # Check out the selected branch if valid
     if [[ -n "$result" ]]; then
         if [[ $result == remotes/* ]]; then
-            git checkout --track "$(echo $result | sed 's#remotes/##')"
+            # Remove 'remotes/' prefix and checkout
+            local branch_name=$(echo "$result" | sed 's#remotes/##')
+            git checkout --track "$branch_name"
         else
             git checkout "$result"
         fi
