@@ -182,3 +182,14 @@ function bru() {
         echo "✨ Brew update complete!"
     fi
 }
+
+# VISET
+## Load keys
+fetch_signing_passwords() {
+    OP_ID="me6mzbdnlp4qhizlrk6utzzm3q"
+
+    export SIGNING_STORE_PASSWORD=$(op item get "$OP_ID" --field password --reveal)
+    export SIGNING_KEY_PASSWORD=$(op item get "$OP_ID" --field password --reveal)
+
+    echo "Passwords set ✅"
+}

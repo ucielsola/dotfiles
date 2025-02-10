@@ -27,6 +27,13 @@ bindkey '^[[B' history-search-forward
 export NVM_DIR=~/.nvm
 source $(brew --prefix nvm)/nvm.sh
 
+# Android
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+# Use java 21
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export PATH=$JAVA_HOME/bin:$PATH
+
 # ---- FZF -----
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --zsh)"
