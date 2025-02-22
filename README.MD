@@ -1,6 +1,6 @@
 # Using [STOW 📂](https://www.gnu.org/software/stow/)
 
-ℹ️ [**Medium Post** - Good guide](https://medium.com/quick-programming/managing-dotfiles-with-gnu-stow-9b04c155ebad)
+💡 [**Medium Post** - Good guide](https://medium.com/quick-programming/managing-dotfiles-with-gnu-stow-9b04c155ebad)
 
 ## ➕ Adding dotfiles
 1. Create a directory in the dotfiles folder with the name of the program you want to manage.
@@ -11,12 +11,21 @@
    1. `cd dotfiles`
    2. `mkdir ghostty/.config`
    3. `touch ./ghostty/.config/ghostty/config` (name-of-program/original-file-path)
-   4. `stow ghostty` 
+   4. `stow ghostty`
    5. Now, a symlink for the `config` file will be created in `$HOME/.config/ghostty`
+
+#### Example for syncing a single file using `--no-folding`:
+   If you only want to sync a single file and not the entire program folder, use `--no-folding`.
+
+   1. `cd dotfiles`
+   2. `mkdir -p zed` (Create a directory for Zed in dotfiles)
+   3. `mv ~/.config/zed/settings.json zed/` (Move the file to your dotfiles repo)
+   4. `stow --no-folding -t ~/.config/zed zed`
+   5. Now, only `settings.json` will be symlinked into `~/.config/zed/`, without affecting other files in that directory.
 
 ## ⬆️ Updating dotfiles
 1. Update the dotfiles in the dotfiles folder.
-2. Run `stow -R <program>` to update the symlinks.  
+2. Run `stow -R <program>` to update the symlinks.
    *The `-R` option ensures old symlinks are cleaned up and new ones are created.*
 
 ## ⬇️ Using on a new machine
