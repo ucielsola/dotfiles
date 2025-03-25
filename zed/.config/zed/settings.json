@@ -1,4 +1,11 @@
 {
+  "assistant": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
+    },
+    "version": "2"
+  },
   "icon_theme": "Catppuccin Latte",
   "ui_font_size": 16,
   "ui_font_family": "MesloLGL Nerd Font Mono",

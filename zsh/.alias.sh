@@ -1,11 +1,11 @@
 # Aliases
+alias code="windsurf"
 alias zshcfg="code ~/dotfiles/zsh/.zshrc"
 alias aliascfg="code ~/dotfiles/zsh/.alias.sh"
 alias src="source ~/.zshrc"
 alias c="clear"
 alias prd="pnpm run dev"
 alias lg="lazygit"
-alias esp="code ~/Library/Application\ Support/espanso/match/base.yml"
 
 # ----------------------
 # LSD (better ls)
@@ -33,7 +33,7 @@ function cdi() {
             --preview='lsd -l --color=always {}' \
             --preview-window='right:60%:wrap' \
             --bind='ctrl-/:toggle-preview')
-    
+
     [[ -n "$selected_dir" ]] && z "$selected_dir"
 }
 
@@ -137,6 +137,110 @@ function log() {
     awk '{print $1}' | tr "\n" " " | pbcopy
 }
 
+# Git worktree
+function gwta() {
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: git-worktree-add <folder-name> [branch-name]"
+    return 1
+  fi
+
+  local folder_name=$1
+  local branch_name=$2
+
+  # If no branch name is provided, use the current branch
+  if [[ -z $branch_name ]]; then
+    branch_name=$(git symbolic-ref --short HEAD)
+    echo "Using current branch: $branch_name"
+  fi
+
+  git worktree add ~/work/mercanis/worktrees/$folder_name $branch_name
+}
+
+function gwtl() {
+  # Create worktrees directory if it doesn't exist
+  mkdir -p ~/work/mercanis/worktrees
+
+  case "$1" in
+    add)
+      if [[ $# -lt 2 ]]; then
+        echo "Usage: git-worktree add <folder-name> [branch-name]"
+        return 1
+      fi
+
+      local folder_name=$2
+      local branch_name=$3
+
+      # If no branch name is provided, use the current branch
+      if [[ -z $branch_name ]]; then
+        branch_name=$(git symbolic-ref --short HEAD)
+        echo "Using current branch: $branch_name"
+      fi
+
+      git worktree add ~/work/mercanis/worktrees/$folder_name $branch_name
+      ;;
+
+    remove)
+      if [[ $# -eq 2 ]]; then
+        local folder_name=$2
+        local worktree_path=~/work/mercanis/worktrees/$folder_name
+
+        if [[ ! -d $worktree_path ]]; then
+          echo "Worktree not found: $worktree_path"
+          return 1
+        fi
+
+        git worktree remove $worktree_path
+        echo "Removed worktree: $worktree_path"
+      else
+        # Use fzf to select a worktree to remove
+        local selected=$(find ~/work/mercanis/worktrees -maxdepth 1 -mindepth 1 -type d | sort | fzf --height 40% --reverse --prompt="Select worktree to remove: ")
+
+        if [[ -n $selected ]]; then
+          git worktree remove $selected
+          echo "Removed worktree: $selected"
+        fi
+      fi
+      ;;
+
+    list)
+      echo "Worktrees:"
+      git worktree list
+      ;;
+
+    goto)
+      if [[ $# -eq 2 ]]; then
+        local folder_name=$2
+        local worktree_path=~/work/mercanis/worktrees/$folder_name
+
+        if [[ ! -d $worktree_path ]]; then
+          echo "Worktree not found: $worktree_path"
+          return 1
+        fi
+
+        cd $worktree_path
+        echo "Switched to worktree: $worktree_path"
+      else
+        # Use fzf to select a worktree to go to
+        local selected=$(find ~/work/mercanis/worktrees -maxdepth 1 -mindepth 1 -type d | sort | fzf --height 40% --reverse --prompt="Select worktree to go to: ")
+
+        if [[ -n $selected ]]; then
+          cd $selected
+          echo "Switched to worktree: $selected"
+        fi
+      fi
+      ;;
+
+    *)
+      echo "Usage: git-worktree <command>"
+      echo "Commands:"
+      echo "  add <folder-name> [branch-name]  - Create a new worktree"
+      echo "  remove [folder-name]             - Remove a worktree (interactive if no name provided)"
+      echo "  list                             - List all worktrees"
+      echo "  goto [folder-name]               - Go to a worktree (interactive if no name provided)"
+      ;;
+  esac
+}
+
 # ----------------------
 # System and Utilities
 # ----------------------
@@ -168,18 +272,24 @@ function mkcd() {
 function bru() {
     echo "📦 Checking outdated packages..."
     outdated=$(brew outdated)
-    
-    if [[ -z "$outdated" ]]; then
+
+    if [ -z "$outdated" ]; then
         echo "✨ All packages are up to date!"
         return
     fi
-    
+
     echo "$outdated"
     echo -n "Continue with update? [y/N] "
-    read answer
-    if [[ $answer =~ ^[Yy]$ ]]; then
-        brew update && brew upgrade && brew cleanup
-        echo "✨ Brew update complete!"
+    read -r answer
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if brew update; then
+            brew upgrade && brew cleanup
+            echo "✨ Brew update complete!"
+        else
+            echo "❌ Brew update failed. Aborting upgrade."
+        fi
+    else
+        echo "🚫 Update canceled."
     fi
 }
 

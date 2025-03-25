@@ -43,3 +43,8 @@ source ~/.alias.sh
 
 # Starship https://starship.rs/
 eval "$(starship init zsh)"
+# Added by Windsurf
+export PATH="/Users/uciel/.codeium/windsurf/bin:$PATH"
+
+# Created by `pipx` on 2025-03-14 19:19:00
+export PATH="$PATH:/Users/uciel/.local/bin"
