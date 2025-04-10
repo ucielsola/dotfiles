@@ -46,10 +46,6 @@ echo "Updating and upgrading homebrew"
 brew update
 brew upgrade
 
-# Install dockutil first as it's needed for dock configuration
-echo "Installing dockutil..."
-brew install dockutil
-
 echo "Fetching Apps lists for Brew"
 curl -fsSL https://raw.githubusercontent.com/ucielsola/dotfiles/refs/heads/main/brew_apps -o /tmp/brew_apps
 curl -fsSL https://raw.githubusercontent.com/ucielsola/dotfiles/refs/heads/main/brew_casks -o /tmp/brew_casks
@@ -124,37 +120,18 @@ else
   echo "1Password CLI not found. Skipping SSH keys setup."
 fi
 
-# Setup the Dock
-echo "Configuring Dock..."
-if command -v dockutil &>/dev/null; then
-  dockutil --remove all --no-restart
-  
-  # Check if the apps exist before adding them
-  [ -d "/Applications/Arc.app" ] && dockutil --add "/Applications/Arc.app" --no-restart
-  [ -d "/Applications/Visual Studio Code.app" ] && dockutil --add "/Applications/Visual Studio Code.app" --no-restart
-  [ -d "/Applications/Ghostty.app" ] && dockutil --add "/Applications/Ghostty.app" --no-restart
-  [ -d "/System/Applications/System Settings.app" ] && dockutil --add "/System/Applications/System Settings.app" --no-restart
-  
-  dockutil --add '~/Downloads' --view list --display folder --no-restart
-  dockutil --add "~/.Trash" --no-restart
-  
-  # Actually apply the dockconfig function
-  echo "Setting up permanent dock auto-hide"
-  defaults write com.apple.dock autohide -bool true
-  defaults write com.apple.dock autohide-delay -float 0
-  defaults write com.apple.dock autohide-time-modifier -float 0
-  defaults write com.apple.dock static-only -bool false
-  
-  # Dock tweaks
-  defaults write com.apple.dock orientation -string left # Move dock to left side of screen
-  defaults write com.apple.dock show-recents -bool FALSE # Disable "Show recent applications in dock"
-  defaults write com.apple.Dock showhidden -bool TRUE    # Show hidden applications as translucent
-  
-  # Restart Dock to apply changes
-  killall Dock
-else
-  echo "dockutil not found. Skipping Dock configuration."
-fi
+# Dock tweaks (without dockutil)
+echo "Configuring Dock settings..."
+defaults write com.apple.dock orientation -string left # Move dock to left side of screen
+defaults write com.apple.dock show-recents -bool FALSE # Disable "Show recent applications in dock"
+defaults write com.apple.Dock showhidden -bool TRUE    # Show hidden applications as translucent
+defaults write com.apple.dock autohide -bool true      # Enable auto-hide
+defaults write com.apple.dock autohide-delay -float 0  # Remove auto-hide delay
+defaults write com.apple.dock autohide-time-modifier -float 0  # Speed up auto-hide animation
+defaults write com.apple.dock static-only -bool false
+
+# Restart Dock to apply changes
+killall Dock
 
 # Git configuration
 echo "Configuring Git..."
@@ -178,9 +155,5 @@ defaults write com.apple.finder AppleShowAllFiles -bool true               # Sho
 defaults write com.apple.finder ShowPathbar -bool true                     # Show path bar
 defaults write com.apple.finder ShowStatusBar -bool true                   # Show status bar
 killall Finder
-
-# Cleanup
-echo "Removing dockutil after setup"
-brew remove dockutil
 
 echo "Setup completed successfully!"
