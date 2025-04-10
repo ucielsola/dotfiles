@@ -40,6 +40,7 @@ eval "$(fzf --zsh)"
 
 # My aliases
 source ~/.alias.sh
+source ~/.git_alias.sh
 
 # Starship https://starship.rs/
 eval "$(starship init zsh)"
@@ -48,3 +49,6 @@ export PATH="/Users/uciel/.codeium/windsurf/bin:$PATH"
 
 # Created by `pipx` on 2025-03-14 19:19:00
 export PATH="$PATH:/Users/uciel/.local/bin"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/uciel/.lmstudio/bin"
