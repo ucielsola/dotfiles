@@ -56,3 +56,6 @@ export PATH="$PATH:/Users/uciel/.local/bin"
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/uciel/.lmstudio/bin"
+
+#PNPM
+export PATH="/opt/homebrew/opt/pnpm@8/bin:$PATH"
