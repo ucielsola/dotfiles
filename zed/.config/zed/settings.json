@@ -8,10 +8,10 @@
   },
   "icon_theme": "Catppuccin Latte",
   "ui_font_size": 16,
-  "ui_font_family": "MesloLGL Nerd Font Mono",
-  "buffer_font_family": "MesloLGL Nerd Font Mono",
+  "ui_font_family": "CaskaydiaMono Nerd Font",
+  "buffer_font_family": "CaskaydiaMono Nerd Font",
   "terminal": {
-    "font_family": "MesloLGL Nerd Font Mono"
+    "font_family": "CaskaydiaMono Nerd Font Mono"
   },
   "buffer_font_size": 16,
   "theme": {
