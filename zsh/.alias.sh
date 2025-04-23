@@ -1,5 +1,4 @@
 # Aliases
-alias code="windsurf"
 alias zshcfg="code ~/dotfiles/zsh/.zshrc"
 alias aliascfg="code ~/dotfiles/zsh/.alias.sh"
 alias src="source ~/.zshrc"
