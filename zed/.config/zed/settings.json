@@ -1,19 +1,19 @@
 {
   "assistant": {
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-latest"
+      "provider": "openai",
+      "model": "gpt-4.1-mini"
     },
     "version": "2"
   },
-  "icon_theme": "Catppuccin Latte",
+  "icon_theme": "Zed (Default)",
   "ui_font_size": 16,
   "ui_font_family": "CaskaydiaMono Nerd Font",
   "buffer_font_family": "CaskaydiaMono Nerd Font",
   "terminal": {
     "font_family": "CaskaydiaMono Nerd Font Mono"
   },
-  "buffer_font_size": 16,
+  "buffer_font_size": 18,
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
@@ -29,6 +29,7 @@
   "git_panel": {
     "dock": "right"
   },
+
   "format_on_save": "on",
   "languages": {
     "Svelte": {

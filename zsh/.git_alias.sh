@@ -207,3 +207,21 @@ function wtmove() {
   git stash pop
   git stash pop
 }
+
+# ----------------------
+# Git Merge Request
+# ----------------------
+
+cmr() {
+  local target_branch="${1:-master}"
+  local branch=$(git rev-parse --abbrev-ref HEAD)
+  local encoded_branch=$(echo "$branch" | sed 's/\//%2F/g')
+  local encoded_target=$(echo "$target_branch" | sed 's/\//%2F/g')
+  local base_url="https://gitlab.com/cdc3-dev/frontend/frontend-monorepo/-/merge_requests/new"
+  local url="$base_url?merge_request%5Bsource_branch%5D=$encoded_branch&merge_request%5Btarget_branch%5D=$encoded_target"
+
+  echo "🔗 Merge request URL:"
+  echo "$url"
+  echo "🚀 Opening in the browser..."
+  open "$url" 2>/dev/null || echo "👉 Copy and paste this URL in your browser"
+}
