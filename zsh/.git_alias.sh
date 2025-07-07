@@ -65,25 +65,38 @@ function extract_commits() {
 }
 
 # Interactive Git branch switching with fzf
-# This function lists local Git branches in an interactive fzf menu.
-# - Left pane: Displays all local branches for selection.
+#
+# This function lists Git branches (local by default, or all with `-a`) in an interactive fzf menu.
+# - Left pane: Displays branches for selection (local or all, depending on the argument).
 # - Right pane: Dynamically shows the Git commit graph and logs for the branch currently highlighted.
 # Selecting a branch with Enter will check it out.
 # Exiting with ESC will leave the current branch unchanged.
+#
+# Usage:
+#   branch        # Show local branches
+#   branch -a     # Show all branches (local + remote)
+
 function branch() {
-    local fzf_command="
-        fzf --height 100% --border --ansi --tac --preview-window right:50% \
-        --preview '
-            branch_name=\$(echo {} | sed \"s/^..//\");
-            echo -e \"\\e[1;36mBranch:\\e[0m \\e[33m\$branch_name\\e[0m\";
-            git log --color=always --oneline --graph --date=short \
-            --pretty=format:\"%C(bold blue)%cd %C(auto)%h%C(bold yellow)%d %C(reset)%s\" \$branch_name 2>/dev/null
-        '
-    "
-    local result=$(git branch --color=always | eval "$fzf_command" | sed 's/^..//')
-    if [[ -n "$result" ]]; then
-        git checkout "$result"
-    fi
+  local branches
+  if [[ "$1" == "-a" ]]; then
+    branches=("${(@f)$(git branch -a --color=always)}")
+  else
+    branches=("${(@f)$(git branch --color=always)}")
+  fi
+
+  local selected=$(printf "%s\n" "${branches[@]}" | \
+    fzf --height 100% --border --ansi --tac --preview-window right:50% \
+      --preview '
+        branch_name=$(echo {} | sed "s/^..//");
+        echo -e "\033[1;36mBranch:\033[0m \033[33m$branch_name\033[0m";
+        git log --color=always --oneline --graph --date=short \
+          --pretty=format:"%C(bold blue)%cd %C(auto)%h%C(bold yellow)%d %C(reset)%s" $branch_name 2>/dev/null
+      ' \
+  | sed 's/^..//')
+
+  if [[ -n "$selected" ]]; then
+    git checkout "$selected"
+  fi
 }
 
 # Git log selector with fzf
@@ -224,4 +237,19 @@ cmr() {
   echo "$url"
   echo "🚀 Opening in the browser..."
   open "$url" 2>/dev/null || echo "👉 Copy and paste this URL in your browser"
+}
+
+# ----------------------
+# Git Squash
+# ----------------------
+
+squash() {
+  target_branch="$1"
+
+  if [ -z "$target_branch" ]; then
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    target_branch="origin/$current_branch"
+  fi
+
+  git merge --squash "$target_branch"
 }
