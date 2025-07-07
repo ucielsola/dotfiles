@@ -65,5 +65,6 @@ export PATH="/Users/uciel/.codeium/windsurf/bin:$PATH"
 
 # Set environment variables from 1Password
 function set_env() {
-    export GL_TOKEN=$(op read "op://Tech/mc62dpxoklkkwt3qybp5dttpbe/credential")
+    GL_TOKEN_ID="mc62dpxoklkkwt3qybp5dttpbe"
+    export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential")
 }
