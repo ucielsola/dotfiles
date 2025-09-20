@@ -79,9 +79,9 @@ function extract_commits() {
 function branch() {
   local branches
   if [[ "$1" == "-a" ]]; then
-    branches=("${(@f)$(git branch -a --color=always)}")
+    branches=(${(f)"$(git branch -a --color=always)"})
   else
-    branches=("${(@f)$(git branch --color=always)}")
+    branches=(${(f)"$(git branch --color=always)"})
   fi
 
   local selected=$(printf "%s\n" "${branches[@]}" | \
@@ -111,115 +111,52 @@ function log() {
     awk '{print $1}' | tr "\n" " " | pbcopy
 }
 
-# ----------------------
-# Worktree management
-# ----------------------
-
-function wtadd() {
-  local WT_ROOT=~/work/mercanis/worktrees
-  local BRANCH="$1"
-
-  if [[ -z "$BRANCH" ]]; then
-    read "BRANCH?Nombre de la rama: "
-    [[ -z "$BRANCH" ]] && return 1
-  fi
-
-  local REPO
-  REPO=$(git rev-parse --show-toplevel 2>/dev/null)
-
-  if [[ -z "$REPO" ]]; then
-    echo "No estás dentro de un repo Git"
-    return 1
-  fi
-
-  cd "$REPO" || return 1
-
-  local DEFAULT_BRANCH
-  DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
-
-  if [[ -z "$DEFAULT_BRANCH" ]]; then
-    echo "No se pudo detectar la rama por defecto (¿hay un remote llamado origin?)"
-    return 1
-  fi
-
-  if ! git show-ref --quiet refs/heads/"$BRANCH"; then
-    git fetch origin "$DEFAULT_BRANCH"
-    git branch "$BRANCH" origin/"$DEFAULT_BRANCH"
-  fi
-
-  git worktree add "$WT_ROOT/$BRANCH" "$BRANCH"
+# Rename current branch to the specified name
+function rename() {
+    local new_name="$1"
+    
+    if [[ -z "$new_name" ]]; then
+        echo "Error: Please provide a new branch name."
+        echo "Usage: rename <new-branch-name>"
+        return 1
+    fi
+    
+    # Get current branch name
+    local current_branch
+    current_branch=$(git branch --show-current 2>/dev/null)
+    
+    if [[ -z "$current_branch" ]]; then
+        echo "Error: Not on any branch (detached HEAD state)."
+        return 1
+    fi
+    
+    # Check if new branch name already exists
+    if git show-ref --verify --quiet refs/heads/"$new_name"; then
+        echo "Error: Branch '$new_name' already exists."
+        return 1
+    fi
+    
+    # Rename the branch
+    git branch -m "$current_branch" "$new_name"
+    
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Branch renamed from '$current_branch' to '$new_name'"
+        
+        # Check if the old branch had an upstream
+        local upstream
+        upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+        
+        if [[ -n "$upstream" ]]; then
+            echo "📡 Updating upstream reference..."
+            git push origin :"$current_branch" 2>/dev/null || true  # Delete old remote branch (ignore if it fails)
+            git push --set-upstream origin "$new_name"  # Push new branch with upstream
+        fi
+    else
+        echo "❌ Failed to rename branch."
+        return 1
+    fi
 }
 
-export WT_PREV_DIR=""
-
-function wtls() {
-  local WT_ROOT=~/work/mercanis/worktrees
-  local CHOICE
-
-  CHOICE=$(find "$WT_ROOT" -mindepth 1 -maxdepth 1 -type d | fzf --prompt="Worktrees > " --height=40%)
-
-  if [[ -n "$CHOICE" ]]; then
-    export WT_PREV_DIR="$PWD"
-    cd "$CHOICE"
-  fi
-}
-
-function wtback() {
-  if [[ -n "$WT_PREV_DIR" && -d "$WT_PREV_DIR" ]]; then
-    cd "$WT_PREV_DIR"
-    WT_PREV_DIR=""
-  else
-    echo "No hay un directorio anterior guardado"
-  fi
-}
-
-function wtre() {
-  local WT_ROOT=~/work/mercanis/worktrees
-  local CHOICE
-
-  CHOICE=$(find "$WT_ROOT" -mindepth 1 -maxdepth 1 -type d | fzf --prompt="Borrar worktree > " --height=40%)
-
-  if [[ -n "$CHOICE" ]]; then
-    git -C "$CHOICE" worktree remove "$CHOICE"
-  fi
-}
-
-function wtmove() {
-  local WT_ROOT=~/work/mercanis/worktrees
-  local TARGET_BRANCH="$1"
-
-  if [[ -z "$TARGET_BRANCH" ]]; then
-    TARGET_BRANCH=$(find "$WT_ROOT" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | fzf --prompt="Mover cambios a > ")
-    [[ -z "$TARGET_BRANCH" ]] && return 1
-  fi
-
-  local REPO
-  REPO=$(git rev-parse --show-toplevel 2>/dev/null) || {
-    echo "No estás dentro de un repo Git"
-    return 1
-  }
-
-  cd "$REPO" || return 1
-
-  if [[ -z $(git status --porcelain) ]]; then
-    echo "No hay cambios para mover"
-    return 0
-  fi
-
-  git stash push -u -k -m "wtmove: $TARGET_BRANCH"
-  git stash push -m "wtmove-stage: $TARGET_BRANCH"
-
-  local DEST="$WT_ROOT/$TARGET_BRANCH"
-  if [[ ! -d "$DEST" ]]; then
-    echo "El worktree '$TARGET_BRANCH' no existe en $WT_ROOT"
-    return 1
-  fi
-
-  cd "$DEST" || return 1
-
-  git stash pop
-  git stash pop
-}
 
 # ----------------------
 # Git Merge Request
@@ -252,4 +189,130 @@ squash() {
   fi
 
   git merge --squash "$target_branch"
+}
+
+
+# WORKTREES
+
+# Create a worktree for code review
+worktree() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: worktree <branch-name>"
+        echo "Creates a worktree at ~/work/mercanis/worktrees/<branch-name>"
+        return 1
+    fi
+    
+    local branch_name="$1"
+    local worktree_dir="$HOME/work/mercanis/worktrees/$branch_name"
+    
+    # Create the worktrees directory if it doesn't exist
+    mkdir -p "$HOME/work/mercanis/worktrees"
+    
+    # Check if worktree already exists
+    if [[ -d "$worktree_dir" ]]; then
+        echo "Worktree already exists at: $worktree_dir"
+        echo "Use 'dump_worktree $branch_name' to remove it first"
+        return 1
+    fi
+    
+    # Create the worktree
+    if git worktree add "$worktree_dir" "$branch_name"; then
+        echo "✅ Worktree created successfully!"
+        echo "📁 Location: $worktree_dir"
+        echo "🚀 Run: cd $worktree_dir"
+    else
+        echo "❌ Failed to create worktree"
+        return 1
+    fi
+}
+
+# Remove a worktree
+dump_worktree() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: dump_worktree <branch-name>"
+        echo "Removes the worktree at ~/work/mercanis/worktrees/<branch-name>"
+        return 1
+    fi
+    
+    local branch_name="$1"
+    local worktree_dir="$HOME/work/mercanis/worktrees/$branch_name"
+    
+    # Check if worktree exists
+    if [[ ! -d "$worktree_dir" ]]; then
+        echo "❌ Worktree not found at: $worktree_dir"
+        return 1
+    fi
+    
+    # Remove the worktree
+    if git worktree remove "$worktree_dir"; then
+        echo "✅ Worktree removed successfully!"
+        echo "🗑️  Removed: $worktree_dir"
+    else
+        echo "❌ Failed to remove worktree"
+        echo "💡 Try: git worktree remove --force $worktree_dir"
+        return 1
+    fi
+}
+
+# Remove all worktrees in the mercanis directory
+prune_worktrees() {
+    local worktrees_base="$HOME/work/mercanis/worktrees"
+    
+    if [[ ! -d "$worktrees_base" ]]; then
+        echo "📁 No worktrees directory found at: $worktrees_base"
+        return 0
+    fi
+    
+    # Get list of worktrees in our specific directory
+    local worktrees_to_remove=()
+    
+    # Parse git worktree list output with awk
+    while IFS= read -r worktree_path; do
+        if [[ -n "$worktree_path" && "$worktree_path" == "$worktrees_base"/* ]]; then
+            worktrees_to_remove+=("$worktree_path")
+        fi
+    done < <(git worktree list | awk '{print $1}')
+    
+    if [[ ${#worktrees_to_remove[@]} -eq 0 ]]; then
+        echo "✨ No worktrees found in $worktrees_base"
+        return 0
+    fi
+    
+    echo "🗑️  Found ${#worktrees_to_remove[@]} worktree(s) to remove:"
+    for wt in "${worktrees_to_remove[@]}"; do
+        echo "   - $wt"
+    done
+    
+    echo -n "❓ Remove all these worktrees? [y/N]: "
+    read -r response
+    
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        local removed_count=0
+        local failed_count=0
+        
+        for wt in "${worktrees_to_remove[@]}"; do
+            if git worktree remove "$wt" 2>/dev/null; then
+                echo "✅ Removed: $wt"
+                ((removed_count++))
+            else
+                echo "❌ Failed to remove: $wt"
+                ((failed_count++))
+            fi
+        done
+        
+        echo "🎉 Summary: $removed_count removed, $failed_count failed"
+        
+        # Clean up empty directory if all were removed successfully
+        if [[ $failed_count -eq 0 && -d "$worktrees_base" ]]; then
+            rmdir "$worktrees_base" 2>/dev/null && echo "🧹 Cleaned up empty worktrees directory"
+        fi
+    else
+        echo "🚫 Operation cancelled"
+    fi
+}
+
+# List all worktrees
+list_worktrees() {
+    echo "📋 Current worktrees:"
+    git worktree list
 }

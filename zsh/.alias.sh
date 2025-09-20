@@ -87,3 +87,17 @@ function bru() {
         echo "🚫 Update canceled."
     fi
 }
+
+# YouTube audio downloader
+function yt() {
+    local url="$1"
+
+    if [[ -z "$url" ]]; then
+        echo "❌ Usage: yt <youtube-url>"
+        echo "💡 Example: yt 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'"
+        return 1
+    fi
+
+    echo "🎵 Downloading audio from: $url"
+    yt-dlp -x --audio-format mp3 --audio-quality 0 -o "~/Downloads/%(title)s.%(ext)s" "$url"
+}
