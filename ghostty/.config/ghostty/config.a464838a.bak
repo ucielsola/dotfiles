@@ -27,4 +27,3 @@ keybind = global:shift+ctrl+alt+super+t=toggle_quick_terminal
 # Shell
 shell-integration-features = no-cursor,sudo,no-title
 copy-on-select = clipboard
-keybind = shift+enter=text:\x1b\r

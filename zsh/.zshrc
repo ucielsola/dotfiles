@@ -42,6 +42,7 @@ eval "$(fzf --zsh)"
 # My aliases
 source ~/.alias.sh
 source ~/.git_alias.sh
+source ~/claude_tools.sh
 
 # Starship https://starship.rs/
 eval "$(starship init zsh)"
@@ -68,3 +69,23 @@ function set_env() {
     GL_TOKEN_ID="mc62dpxoklkkwt3qybp5dttpbe"
     export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential")
 }
+
+source /Users/uciel/dotfiles/review/main.sh
+    export PATH="$HOME/.local/bin:$PATH"
+
+# Poetry Auto-Fix Function
+# Use this instead of 'just install' to automatically handle Poetry issues
+poetry-install() {
+    local project_root=$(pwd)
+    if [[ -f "$project_root/fix-poetry.sh" ]]; then
+        "$project_root/fix-poetry.sh"
+    elif [[ -f "$project_root/../fix-poetry.sh" ]]; then
+        "$project_root/../fix-poetry.sh"
+    else
+        echo "fix-poetry.sh not found. Running regular just install..."
+        just install
+    fi
+}
+
+# Alias for convenience
+alias pi="poetry-install"

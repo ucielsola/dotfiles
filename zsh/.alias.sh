@@ -99,5 +99,5 @@ function yt() {
     fi
 
     echo "🎵 Downloading audio from: $url"
-    yt-dlp -x --audio-format mp3 --audio-quality 0 -o "~/Downloads/%(title)s.%(ext)s" "$url"
+    yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-metadata --add-metadata -o "~/Downloads/%(title)s.%(ext)s" "$url"
 }
