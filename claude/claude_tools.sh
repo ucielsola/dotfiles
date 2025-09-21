@@ -1,15 +1,4 @@
-# Helper to show available MR tools
-mr_help() {
-    echo "🔧 Available MR Tools:"
-    echo "  getDiff        - Get formatted diff for Claude analysis"
-    echo "  update_mr '<summary>' - Update current branch's MR with summary"
-    echo ""
-    echo "📋 Typical workflow:"
-    echo "  1. getDiff"
-    echo "  2. Ask Claude to analyze and create summary"
-    echo "  3. update_mr '<claude-generated-summary>'"
-}
-
+#
 # getDiff - Generate diff summary for Claude analysis
 #
 # Usage: getDiff [base_branch]
@@ -56,7 +45,6 @@ getDiff() {
     echo "### Key Code Changes:"
     git diff "$base_branch"...HEAD --no-merges --unified=2 | head -50
 }
-
 
 #
 # update_mr - Update GitLab MR description with summary
