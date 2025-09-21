@@ -63,54 +63,54 @@ getDiff() {
 # Exit: 0=success, 1=error
 #
 update_mr() {
-    local summary="$1"
-    
-    # Validate required summary parameter
-    if [[ -z "$summary" ]]; then
-        echo "❌ Usage: update_mr '<summary of changes>'"
-        echo "💡 Tip: Run getDiff first, then call this with Claude's summary"
-        return 1
-    fi
-    
-    # Validate git repository
-    if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
-        echo "❌ Not in a git repository"
-        return 1
-    fi
-    
-    local current_branch=$(git branch --show-current)
-    echo "🔍 Looking for MR for branch: $current_branch"
-    
-    # Find MR for current branch using JSON output for reliable parsing
-    local mr_output=$(glab mr list --source-branch="$current_branch" --json 2>/dev/null)
-    
-    if [[ -z "$mr_output" ]] || [[ "$mr_output" == "[]" ]]; then
-        echo "❌ No open MR found for branch '$current_branch'"
-        echo "💡 Create MR first: glab mr create"
-        return 1
-    fi
-    
-    # Extract MR ID from JSON
-    local mr_id=$(echo "$mr_output" | jq -r '.[0].iid // empty' 2>/dev/null)
-    
-    if [[ -z "$mr_id" ]]; then
-        echo "❌ Could not extract MR ID from glab output"
-        echo "🐛 Debug output:"
-        echo "$mr_output"
-        return 1
-    fi
-    
-    echo "📝 Found MR !$mr_id"
-    echo "🔄 Updating description..."
-    
-    # Update MR description
-    if glab mr update "$mr_id" --description "$summary" 2>/dev/null; then
-        echo "✅ Successfully updated MR !$mr_id"
-        echo "🔗 View: glab mr view $mr_id --web"
-    else
-        echo "❌ Failed to update MR description"
-        return 1
-    fi
+      local summary="$1"
+
+      # Validate required summary parameter
+      if [[ -z "$summary" ]]; then
+          echo "❌ Usage: update_mr '<summary of changes>'"
+          echo "💡 Tip: Run getDiff first, then call this with Claude's summary"
+          return 1
+      fi
+
+      # Validate git repository
+      if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+          echo "❌ Not in a git repository"
+          return 1
+      fi
+
+      local current_branch=$(git branch --show-current)
+      echo "🔍 Looking for MR for branch: $current_branch"
+
+      # Find MR for current branch using JSON output for reliable parsing
+      local mr_output=$(glab mr list --source-branch="$current_branch" --output json 2>/dev/null)
+
+      if [[ -z "$mr_output" ]] || [[ "$mr_output" == "[]" ]]; then
+          echo "❌ No open MR found for branch '$current_branch'"
+          echo "💡 Create MR first: glab mr create"
+          return 1
+      fi
+
+      # Extract MR ID from JSON
+      local mr_id=$(echo "$mr_output" | jq -r '.[0].iid // empty' 2>/dev/null)
+
+      if [[ -z "$mr_id" ]]; then
+          echo "❌ Could not extract MR ID from glab output"
+          echo "🐛 Debug output:"
+          echo "$mr_output"
+          return 1
+      fi
+
+      echo "📝 Found MR !$mr_id"
+      echo "🔄 Updating description..."
+
+      # Update MR description
+      if glab mr update "$mr_id" --description "$summary" 2>/dev/null; then
+          echo "✅ Successfully updated MR !$mr_id"
+          echo "🔗 View: glab mr view $mr_id --web"
+      else
+          echo "❌ Failed to update MR description"
+          return 1
+      fi
 }
 
 
