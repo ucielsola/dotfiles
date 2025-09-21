@@ -7,6 +7,12 @@
 # Analyzes changes between feature branch and base branch.
 # Must be run on feature branch from git repository.
 #
+# The code changes section uses `head -200` to limit token consumption
+# while preserving critical information. Adjust based on change size:
+# - Small changes: head -100 (faster Claude processing)
+# - Large refactors: head -500 or remove entirely
+# - Very large: remove head limit and review in sections
+#
 # Output: branch name, changed files, commits, stats, code diff
 # Exit: 0=success, 1=error
 #
@@ -31,19 +37,19 @@ getDiff() {
     echo ""
     
     echo "### Files Changed:"
-    git diff "$base_branch"...HEAD --name-status | head -20
+    git diff "$base_branch"...HEAD --name-status
     echo ""
     
     echo "### Commit Messages:"
-    git log "$base_branch"..HEAD --oneline | head -10
+    git log "$base_branch"..HEAD --oneline
     echo ""
     
     echo "### Diff Stats:"
-    git diff "$base_branch"...HEAD --stat | head -15
+    git diff "$base_branch"...HEAD --stat
     echo ""
     
     echo "### Key Code Changes:"
-    git diff "$base_branch"...HEAD --no-merges --unified=2 | head -50
+    git diff "$base_branch"...HEAD --no-merges --unified=3 | head -200
 }
 
 #
