@@ -12,15 +12,17 @@ return {
             model = "claude-3-5-haiku-20241022",
             system = nil, -- Use default
             stream = true,
+            api_key = "ANTHROPIC_API_KEY",
             optional = {
-              max_tokens = 512,
+              max_tokens = 256, -- Reduced for faster response
             },
           },
         },
-        notify = "warn",
+        notify = "debug", -- Changed from "warn" to "debug" for more info
         throttle = 1000,
         debounce = 400,
-        request_timeout = 3,
+        request_timeout = 5, -- Increased from 3 to 5 seconds
+        context_window = 8000, -- Reduced to avoid sending too much context
       })
     end,
   },
@@ -35,16 +37,11 @@ return {
             name = "minuet",
             module = "minuet.blink",
             score_offset = 50,
+            async = true,
+            timeout_ms = 5000,
           },
         },
       },
     },
   },
 }
-
--- API Key Setup:
--- Set ANTHROPIC_API_KEY environment variable in your shell:
--- export ANTHROPIC_API_KEY="your-api-key-here"
--- 
--- Or add to ~/.zshrc:
--- echo 'export ANTHROPIC_API_KEY="your-api-key"' >> ~/.zshrc
