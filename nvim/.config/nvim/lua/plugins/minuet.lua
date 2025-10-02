@@ -14,17 +14,32 @@ return {
             stream = true,
             api_key = "ANTHROPIC_API_KEY",
             optional = {
-              max_tokens = 256, -- Reduced for faster response
+              max_tokens = 256,
             },
           },
         },
-        notify = "debug", -- Changed from "warn" to "debug" for more info
+        notify = "debug",
         throttle = 1000,
         debounce = 400,
-        request_timeout = 5, -- Increased from 3 to 5 seconds
-        context_window = 8000, -- Reduced to avoid sending too much context
+        request_timeout = 5,
+        context_window = 8000,
+        -- Enable auto-completion through blink
+        blink = {
+          enable_auto_complete = true,
+        },
       })
     end,
+    keys = {
+      -- Manual trigger for minuet completion
+      {
+        "<A-y>",
+        function()
+          require("blink-cmp").show({ providers = { "minuet" } })
+        end,
+        mode = "i",
+        desc = "Trigger Minuet AI completion",
+      },
+    },
   },
   {
     "saghen/blink.cmp",
