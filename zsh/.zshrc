@@ -10,7 +10,6 @@ zplug "Aloxaf/fzf-tab"
 
 zplug load
 
-
 # ---- Zoxide (better cd) ----
 eval "$(zoxide init zsh)"
 eval $(thefuck --alias)
@@ -25,7 +24,6 @@ setopt hist_ignore_dups
 setopt hist_verify
 bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
-
 
 # Node Version Manager
 export NVM_DIR=~/.nvm
@@ -46,25 +44,11 @@ source ~/.git_alias.sh
 # AI Tools
 source ~/dotfiles/ai/tools.sh
 
-# Starship https://starship.rs/
-eval "$(starship init zsh)"
-# Added by Windsurf
-export PATH="/Users/uciel/.codeium/windsurf/bin:$PATH"
-
-# Created by `pipx` on 2025-03-14 19:19:00
-export PATH="$PATH:/Users/uciel/.local/bin"
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/uciel/.lmstudio/bin"
-
 #PNPM
 export PATH="/opt/homebrew/opt/pnpm@8/bin:$PATH"
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)
-
-# Added by Windsurf
-export PATH="/Users/uciel/.codeium/windsurf/bin:$PATH"
 
 # Set environment variables from 1Password
 function set_env() {
@@ -72,22 +56,4 @@ function set_env() {
     export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential")
 }
 
-source /Users/uciel/dotfiles/review/main.sh
-    export PATH="$HOME/.local/bin:$PATH"
-
-# Poetry Auto-Fix Function
-# Use this instead of 'just install' to automatically handle Poetry issues
-poetry-install() {
-    local project_root=$(pwd)
-    if [[ -f "$project_root/fix-poetry.sh" ]]; then
-        "$project_root/fix-poetry.sh"
-    elif [[ -f "$project_root/../fix-poetry.sh" ]]; then
-        "$project_root/../fix-poetry.sh"
-    else
-        echo "fix-poetry.sh not found. Running regular just install..."
-        just install
-    fi
-}
-
-# Alias for convenience
-alias pi="poetry-install"
+export EDITOR=code
