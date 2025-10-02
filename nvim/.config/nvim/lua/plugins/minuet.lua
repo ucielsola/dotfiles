@@ -14,17 +14,17 @@ return {
             api_key = "GOOGLE_AI_API_KEY",
             optional = {
               generationConfig = {
-                maxOutputTokens = 128,
+                maxOutputTokens = 512, -- Increased from 128 for more complete suggestions
               },
             },
           },
         },
         notify = false,
-        throttle = 500,
-        debounce = 300,
-        request_timeout = 3,
-        context_window = 4000,
-        n_completions = 2,
+        throttle = 1000, -- Slightly increased to avoid too many requests
+        debounce = 500, -- Increased to let you type more before suggesting
+        request_timeout = 5, -- More time for longer completions
+        context_window = 12000, -- Increased from 4000 for better context understanding
+        n_completions = 3, -- Back to 3 for more variety
       })
     end,
     keys = {
@@ -50,7 +50,7 @@ return {
             module = "minuet.blink",
             score_offset = 50,
             async = true,
-            timeout_ms = 3000,
+            timeout_ms = 5000, -- More time for better completions
           },
         },
       },
