@@ -3,6 +3,16 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
+local get_session_name = function()
+  local name = vim.fn.getcwd()
+  local branch = vim.fn.system("git branch --show-current")
+  if vim.v.shell_error == 0 then
+    return name .. vim.trim(branch --[[@as string]])
+  else
+    return name
+  end
+end
+
 ---@type LazySpec
 return {
   "AstroNvim/astrocore",
@@ -21,6 +31,9 @@ return {
     diagnostics = {
       virtual_text = true,
       underline = true,
+    },
+    sessions = {
+      autosave = { cwd = false },
     },
     -- passed to `vim.filetype.add`
     filetypes = {
@@ -61,6 +74,25 @@ return {
         ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
 
+        ["<Leader>SS"] = {
+          function()
+            require("resession").save(
+              get_session_name(),
+              { dir = "dirsession" }
+            )
+          end,
+          desc = "Save this dirsession",
+        },
+        ["<Leader>S."] = {
+          function()
+            require("resession").load(
+              get_session_name(),
+              { dir = "dirsession" }
+            )
+          end,
+          desc = "Load current dirsession",
+        },
+
         -- mappings seen under group name "Buffer"
         ["<Leader>bd"] = {
           function()
@@ -69,6 +101,17 @@ return {
             )
           end,
           desc = "Close buffer from tabline",
+        },
+
+        ["<Leader>c"] = {
+          function()
+            local bufs = vim.fn.getbufinfo({ buflisted = true })
+            require("astrocore.buffer").close(0)
+            if not bufs[2] then
+              require("snacks").dashboard()
+            end
+          end,
+          desc = "Close buffer",
         },
 
         -- tables with just a `desc` key will be registered with which-key if it's installed
@@ -85,6 +128,35 @@ return {
       v = {
         ["<S-Up>"] = "<Up>",
         ["<S-Down>"] = "<Down>",
+      },
+    },
+    autocmds = {
+      git_branch_sessions = {
+        {
+          event = "VimLeavePre",
+          desc = "Save git branch directory sessions on close",
+          callback = vim.schedule_wrap(function()
+            if require("astrocore.buffer").is_valid_session() then
+              require("resession").save(
+                get_session_name(),
+                { dir = "dirsession", notify = false }
+              )
+            end
+          end),
+        },
+        {
+          event = "VimEnter",
+          desc = "Restore previous directory session if neovim opened with no arguments",
+          nested = true,
+          callback = function()
+            if vim.fn.argc(-1) == 0 then
+              require("resession").load(
+                get_session_name(),
+                { dir = "dirsession", silence_errors = true }
+              )
+            end
+          end,
+        },
       },
     },
   },
