@@ -6,6 +6,7 @@ alias c="clear"
 alias prd="pnpm run dev"
 alias lg="lazygit"
 alias oc="opencode"
+alias n="nvim"
 # ----------------------
 # LSD (better ls)
 # ----------------------

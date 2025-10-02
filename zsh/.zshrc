@@ -56,6 +56,6 @@ function set_env() {
     export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential")
 }
 
-export EDITOR=code
+export EDITOR=nvim
 
 eval "$(starship init zsh)"
