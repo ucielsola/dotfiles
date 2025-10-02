@@ -10,27 +10,23 @@ return {
         provider_options = {
           claude = {
             model = "claude-3-5-haiku-20241022",
-            system = nil, -- Use default
             stream = true,
             api_key = "ANTHROPIC_API_KEY",
             optional = {
-              max_tokens = 256,
+              max_tokens = 128, -- Reduced from 256 for faster response
+              stop_sequences = { "\n\n" }, -- Stop at double newline for quicker results
             },
           },
         },
-        notify = "debug",
-        throttle = 1000,
-        debounce = 400,
-        request_timeout = 5,
-        context_window = 8000,
-        -- Enable auto-completion through blink
-        blink = {
-          enable_auto_complete = true,
-        },
+        notify = false, -- Disable all notifications
+        throttle = 500, -- Reduced from 1000ms for faster triggering
+        debounce = 300, -- Reduced from 400ms for quicker response
+        request_timeout = 4, -- Slightly reduced from 5
+        context_window = 4000, -- Reduced from 8000 for faster processing
+        n_completions = 2, -- Reduced from 3 to get results faster
       })
     end,
     keys = {
-      -- Manual trigger for minuet completion
       {
         "<A-y>",
         function()
@@ -53,7 +49,7 @@ return {
             module = "minuet.blink",
             score_offset = 50,
             async = true,
-            timeout_ms = 5000,
+            timeout_ms = 4000, -- Reduced from 5000
           },
         },
       },
