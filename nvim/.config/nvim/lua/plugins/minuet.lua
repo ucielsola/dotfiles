@@ -6,24 +6,25 @@ return {
     },
     config = function()
       require("minuet").setup({
-        provider = "claude",
+        provider = "gemini",
         provider_options = {
-          claude = {
-            model = "claude-3-5-haiku-20241022",
+          gemini = {
+            model = "gemini-2.0-flash-exp",
             stream = true,
-            api_key = "ANTHROPIC_API_KEY",
+            api_key = "GEMINI_API_KEY", -- Set as: export GEMINI_API_KEY="your-key"
             optional = {
-              max_tokens = 128, -- Reduced from 256 for faster response
-              stop_sequences = { "\n\n" }, -- Stop at double newline for quicker results
+              generationConfig = {
+                maxOutputTokens = 128,
+              },
             },
           },
         },
-        notify = false, -- Disable all notifications
-        throttle = 500, -- Reduced from 1000ms for faster triggering
-        debounce = 300, -- Reduced from 400ms for quicker response
-        request_timeout = 4, -- Slightly reduced from 5
-        context_window = 4000, -- Reduced from 8000 for faster processing
-        n_completions = 2, -- Reduced from 3 to get results faster
+        notify = false,
+        throttle = 500,
+        debounce = 300,
+        request_timeout = 3, -- Gemini is faster, reduced from 4
+        context_window = 4000,
+        n_completions = 2,
       })
     end,
     keys = {
@@ -49,7 +50,7 @@ return {
             module = "minuet.blink",
             score_offset = 50,
             async = true,
-            timeout_ms = 4000, -- Reduced from 5000
+            timeout_ms = 3000,
           },
         },
       },
