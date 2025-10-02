@@ -11,7 +11,7 @@ return {
           gemini = {
             model = "gemini-2.0-flash-exp",
             stream = true,
-            api_key = "GEMINI_API_KEY", -- Set as: export GEMINI_API_KEY="your-key"
+            api_key = "GOOGLE_AI_API_KEY",
             optional = {
               generationConfig = {
                 maxOutputTokens = 128,
@@ -22,7 +22,7 @@ return {
         notify = false,
         throttle = 500,
         debounce = 300,
-        request_timeout = 3, -- Gemini is faster, reduced from 4
+        request_timeout = 3,
         context_window = 4000,
         n_completions = 2,
       })
