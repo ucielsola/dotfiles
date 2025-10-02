@@ -57,3 +57,5 @@ function set_env() {
 }
 
 export EDITOR=code
+
+eval "$(starship init zsh)"
