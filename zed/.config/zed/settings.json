@@ -1,12 +1,14 @@
 {
-  "assistant": {
-    "default_model": {
-      "provider": "openai",
-      "model": "gpt-4.1-mini"
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null,
+      "enterprise_uri": null
     },
-    "version": "2"
+    "enabled_in_text_threads": false
   },
-  "icon_theme": "Zed (Default)",
+  "icon_theme": "Catppuccin Latte",
   "ui_font_size": 16,
   "ui_font_family": "CaskaydiaMono Nerd Font",
   "buffer_font_family": "CaskaydiaMono Nerd Font",
@@ -17,7 +19,7 @@
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
-    "dark": "Catppuccin Macchiato"
+    "dark": "Catppuccin Latte"
   },
   "project_panel": {
     "dock": "right",
@@ -27,53 +29,8 @@
   },
   "outline_panel": { "dock": "right" },
   "git_panel": {
+    "sort_by_path": true,
     "dock": "right"
   },
-
-  "format_on_save": "on",
-  "languages": {
-    "Svelte": {
-      "formatter": {
-        "external": {
-          "command": "/Users/uciel/.nvm/versions/node/v20.18.1/bin/prettier",
-          "arguments": [
-            "--plugin",
-            "/Users/uciel/.nvm/versions/node/v20.18.1/lib/node_modules/prettier-plugin-svelte/plugin.js",
-            "--config",
-            "/Users/uciel/work/mercanis/frontend-monorepo/.prettierrc",
-            "--stdin-filepath",
-            "{buffer_path}"
-          ]
-        }
-      }
-    },
-    "TypeScript": {
-      "formatter": {
-        "external": {
-          "command": "/Users/uciel/.nvm/versions/node/v20.18.1/bin/prettier",
-          "arguments": [
-            "--config",
-            "/Users/uciel/work/mercanis/frontend-monorepo/.prettierrc",
-            "--stdin-filepath",
-            "{buffer_path}"
-          ]
-        }
-      }
-    },
-    "JSON": {
-      "formatter": {
-        "external": {
-          "command": "/Users/uciel/.nvm/versions/node/v20.18.1/bin/prettier",
-          "arguments": [
-            "--plugin",
-            "prettier-plugin-sort-json",
-            "--config",
-            "/Users/uciel/work/mercanis/frontend-monorepo/.prettierrc",
-            "--stdin-filepath",
-            "{buffer_path}"
-          ]
-        }
-      }
-    }
-  }
+  "format_on_save": "on"
 }

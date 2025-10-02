@@ -42,7 +42,9 @@ eval "$(fzf --zsh)"
 # My aliases
 source ~/.alias.sh
 source ~/.git_alias.sh
-source ~/claude_tools.sh
+
+# AI Tools
+source ~/dotfiles/ai/tools.sh
 
 # Starship https://starship.rs/
 eval "$(starship init zsh)"

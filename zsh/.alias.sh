@@ -5,7 +5,7 @@ alias src="source ~/.zshrc"
 alias c="clear"
 alias prd="pnpm run dev"
 alias lg="lazygit"
-
+alias oc="opencode"
 # ----------------------
 # LSD (better ls)
 # ----------------------
