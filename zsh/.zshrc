@@ -38,22 +38,25 @@ export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 eval "$(fzf --zsh)"
 
 # My aliases
-source ~/.alias.sh
-source ~/.git_alias.sh
+source ~/alias.sh
+source ~/git_alias.sh
 
-# AI Tools
-source ~/dotfiles/ai/tools.sh
 
 #PNPM
 export PATH="/opt/homebrew/opt/pnpm@8/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)
 
+# Load secrets
+source ~/.secrets
+
 # Set environment variables from 1Password
 function set_env() {
+    # GitLab token from Mercanis account (Tech vault)
     GL_TOKEN_ID="mc62dpxoklkkwt3qybp5dttpbe"
-    export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential")
+    export GL_TOKEN=$(op read "op://Tech/$GL_TOKEN_ID/credential" --account "mercanis.1password.com")
 }
 
 export EDITOR=nvim

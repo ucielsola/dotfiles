@@ -1,0 +1,35 @@
+#!/bin/bash
+
+local base_branch="${1:-master}"
+
+# Validate git repository
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    echo "❌ Not in a git repository"
+    return 1
+fi
+
+# Get current branch and check not on base branch
+local current_branch=$(git branch --show-current)
+if [[ "$current_branch" == "$base_branch" ]]; then
+    echo "❌ Currently on $current_branch branch. Switch to feature branch first."
+    return 1
+fi
+
+# Generate structured output
+echo "## Branch: $current_branch (comparing to $base_branch)"
+echo ""
+
+echo "### Files Changed:"
+git diff "$base_branch"...HEAD --name-status
+echo ""
+
+echo "### Commit Messages:"
+git log "$base_branch"..HEAD --oneline
+echo ""
+
+echo "### Diff Stats:"
+git diff "$base_branch"...HEAD --stat
+echo ""
+
+echo "### Key Code Changes:"
+git diff "$base_branch"...HEAD --no-merges --unified=3 | head -200
