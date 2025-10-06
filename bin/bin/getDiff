@@ -1,35 +1,65 @@
 #!/bin/bash
+#
+# getDiff - Generate diff summary for Claude analysis
+#
+# Usage: getDiff [base_branch]
+# Default base_branch: master
+#
+# Analyzes changes between feature branch and base branch.
+# Must be run on feature branch from git repository.
+#
+# The code changes section uses `head -300` to limit token consumption
+# while preserving critical information. Adjust based on change size:
+# - Small changes: head -100 (faster Claude processing)
+# - Large refactors: head -500 or remove entirely
+# - Very large: remove head limit and review in sections
+#
+# Output: branch name, changed files, commits, stats, code diff
+# Exit: 0=success, 1=error
+#
+getDiff() {
+    local base_branch="${1:-master}"
+    
+    # Validate git repository
+    if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+        echo "❌ Not in a git repository"
+        return 1
+    fi
+    
+    # Get current branch and check not on base branch
+    local current_branch=$(git branch --show-current)
+    if [[ "$current_branch" == "$base_branch" ]]; then
+        echo "❌ Currently on $current_branch branch. Switch to feature branch first."
+        return 1
+    fi
+    
+    # Check if base branch is up to date
+    if git fetch origin "$base_branch" --dry-run 2>&1 | grep -qv "up to date"; then
+        echo "⚠️  Warning: $base_branch may be outdated. Consider running: git fetch origin $base_branch"
+        echo ""
+    fi
+    
+    # Generate structured output
+    echo "## Branch: $current_branch (comparing to $base_branch)"
+    echo ""
+    
+    echo "### Files Changed:"
+    git diff "$base_branch"...HEAD --name-status
+    echo ""
+    
+    echo "### Commit Messages:"
+    git log "$base_branch"..HEAD --oneline
+    echo ""
+    
+    echo "### Diff Stats:"
+    git diff "$base_branch"...HEAD --stat
+    echo ""
+    
+    echo "### Key Code Changes:"
+    git diff "$base_branch"...HEAD --no-merges --unified=3 | head -300
+}
 
-local base_branch="${1:-master}"
-
-# Validate git repository
-if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
-    echo "❌ Not in a git repository"
-    return 1
+# Execute if run as script (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    getDiff "$@"
 fi
-
-# Get current branch and check not on base branch
-local current_branch=$(git branch --show-current)
-if [[ "$current_branch" == "$base_branch" ]]; then
-    echo "❌ Currently on $current_branch branch. Switch to feature branch first."
-    return 1
-fi
-
-# Generate structured output
-echo "## Branch: $current_branch (comparing to $base_branch)"
-echo ""
-
-echo "### Files Changed:"
-git diff "$base_branch"...HEAD --name-status
-echo ""
-
-echo "### Commit Messages:"
-git log "$base_branch"..HEAD --oneline
-echo ""
-
-echo "### Diff Stats:"
-git diff "$base_branch"...HEAD --stat
-echo ""
-
-echo "### Key Code Changes:"
-git diff "$base_branch"...HEAD --no-merges --unified=3 | head -200
