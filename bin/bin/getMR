@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# getMR - Get MR number from current branch
+#
+# Usage: getMR
+#
+# Finds the merge request associated with the current git branch.
+# Must be run from within a git repository on a feature branch.
+#
+# Output: MR number (e.g., "7495")
+# Exit: 0=success, 1=error
+#
+getMR() {
+    # Validate git repository
+    if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+        echo "❌ Not in a git repository" >&2
+        return 1
+    fi
+    
+    # Get current branch
+    local current_branch=$(git branch --show-current)
+    if [[ -z "$current_branch" ]]; then
+        echo "❌ Could not determine current branch" >&2
+        return 1
+    fi
+    
+    # Find MR for current branch
+    local mr_number=$(glab mr list --source-branch="$current_branch" --state=opened --per-page=1 2>/dev/null | grep -oP '!\K\d+' | head -1)
+    
+    if [[ -z "$mr_number" ]]; then
+        echo "❌ No open MR found for branch: $current_branch" >&2
+        return 1
+    fi
+    
+    echo "$mr_number"
+}
+
+# Execute if run as script (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    getMR "$@"
+fi

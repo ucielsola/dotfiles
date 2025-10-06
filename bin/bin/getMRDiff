@@ -1,0 +1,52 @@
+#
+# getMRDiff - Generate MR diff summary for Claude Code analysis
+#
+# Usage: getMRDiff [mr_number]
+#        getMRDiff           # Uses MR from current branch
+#
+# Retrieves comprehensive MR information optimized for Claude Code review.
+# If no MR number provided, automatically detects from current branch.
+#
+# Output includes:
+# - MR metadata (title, description, author, status)
+# - Changed files list
+# - Raw diff with no color formatting
+# - Statistics
+#
+# Output: Structured MR information for Claude analysis
+# Exit: 0=success, 1=error
+#
+getMRDiff() {
+    local mr_number="$1"
+    
+    # If no MR number provided, get from current branch
+    if [[ -z "$mr_number" ]]; then
+        mr_number=$(getMR)
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+    fi
+    
+    echo "## Merge Request !$mr_number"
+    echo ""
+    
+    echo "### MR Information:"
+    glab mr view "$mr_number" 2>/dev/null
+    if [[ $? -ne 0 ]]; then
+        echo "❌ Failed to retrieve MR !$mr_number" >&2
+        return 1
+    fi
+    echo ""
+    
+    echo "### Raw Diff:"
+    glab mr diff "$mr_number" --raw --color=never 2>/dev/null
+    if [[ $? -ne 0 ]]; then
+        echo "❌ Failed to retrieve diff for MR !$mr_number" >&2
+        return 1
+    fi
+}
+
+# Execute if run as script (not sourced)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    getMRDiff "$@"
+fi

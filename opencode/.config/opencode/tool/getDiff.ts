@@ -8,7 +8,10 @@ export default tool({
   },
   async execute(args) {
     try {
-      const result = execSync(`getDiff ${args.baseBranch}`, { encoding: 'utf-8' })
+      const result = execSync(`getDiff ${args.baseBranch}`, { 
+        encoding: 'utf-8',
+        maxBuffer: 10 * 1024 * 1024
+      })
       return result
     } catch (error: unknown) {
       return `Error running getDiff: ${(error as Error).message}`
