@@ -62,3 +62,7 @@ function set_env() {
 }
 
 export EDITOR=code
+
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh --config ~/dotfiles/ohmyposh/config.omp.json)"
+fi
