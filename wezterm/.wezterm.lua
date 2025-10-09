@@ -13,9 +13,9 @@ local function get_theme_for_time()
   
   -- Light theme from 7am to 7pm, dark theme otherwise
   if hour >= 7 and hour < 17 then
-    return "Catppuccin Latte"
+    return "Everforest Light (Hard contrast)"
   else
-    return "Catppuccin Mocha"
+    return "Everforest Dark (Medium)"
   end
 end
 
